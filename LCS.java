@@ -16,9 +16,8 @@ public class LCS {
         int m = a.length;
         int n = b.length;
 
-        // Tabela DP de tamanho (M+1) x (N+1).
         // dp[i][j] guardará a quantidade máxima de ativos em comum
-        // considerando apenas os i primeiros ativos da Corretora A e os j primeiros da Corretora B.
+        // i primeiros ativos da Corretora A e os j primeiros da Corretora B.
         int[][] dp = new int[m + 1][n + 1];
 
         for (int i = 1; i <= m; i++) {
@@ -26,7 +25,6 @@ public class LCS {
                 // Comparação da igualdade dos tickers
                 if (a[i - 1].equals(b[j - 1])) {
                     // Se o ativo i-1 da Corretora A é igual ao ativo j-1 da Corretora B:
-                    // Incrementamos 1 ao melhor resultado dos prefixos anteriores (dp[i-1][j-1])
                     dp[i][j] = dp[i - 1][j - 1] + 1;
                 } else {
                     // Se forem diferentes:
@@ -37,7 +35,9 @@ public class LCS {
             }
         }
 
-        // Passo 2: Reconstrução (Backtracking) para recuperar os ativos selecionados
+        
+
+        // backtracking
         List<String> lcs = new ArrayList<>();
         int i = m, j = n;
 
