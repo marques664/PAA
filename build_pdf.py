@@ -1,0 +1,346 @@
+import os
+import subprocess
+import sys
+
+html_content = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>README - Alinhamento Estratégico de Carteiras Recomendadas</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 18mm 16mm 18mm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.5;
+            font-size: 10pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-box {
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+
+        .institution {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .course-title {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 1px 0 0 0;
+        }
+
+        .doc-title {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 4px 0 2px 0;
+        }
+
+        .meta-info {
+            font-size: 8.5pt;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        h2 {
+            font-size: 11.5pt;
+            color: #1e40af;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 3px;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 10pt;
+            color: #1e293b;
+            margin-top: 11px;
+            margin-bottom: 4px;
+            page-break-after: avoid;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: 8px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        .formula-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 9.5pt;
+        }
+
+        .cases-table {
+            margin: 6px auto;
+            border-collapse: collapse;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 9pt;
+        }
+
+        .cases-table td {
+            padding: 3px 8px;
+            vertical-align: middle;
+        }
+
+        .brace {
+            font-size: 32pt;
+            font-weight: 300;
+            color: #1e40af;
+            line-height: 1;
+            padding-right: 6px;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 9pt;
+            page-break-inside: avoid;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #cbd5e1;
+            padding: 6px 10px;
+            text-align: center;
+        }
+
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .callout {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 9pt;
+        }
+
+        .math-var {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .code-inline {
+            font-family: 'Consolas', monospace;
+            background-color: #f1f5f9;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 9pt;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="institution">IFSULDEMINAS &mdash; Campus Poços de Caldas</div>
+        <div class="course-title">Projeto e Análise de Algoritmos (PAA) &mdash; Prof. Douglas Castilho</div>
+        <div class="doc-title">Trabalho Prático 1: Alinhamento Estratégico de Carteiras</div>
+        <div class="meta-info">
+            <strong>Documentação Técnica (README.pdf)</strong> &nbsp;|&nbsp; 
+            <strong>Problema:</strong> Núcleo de Consenso Ordenado (LCS) &nbsp;|&nbsp;
+            <strong>Linguagem:</strong> Java 17+
+        </div>
+    </div>
+
+    <h2>1. Descrição e Modelagem da Solução Desenvolvida</h2>
+    
+    <p>
+        O objetivo deste trabalho prático é determinar o <strong>Núcleo de Consenso Ordenado</strong> entre duas carteiras recomendadas de ações da B3, emitidas por duas corretoras distintas (<span class="math-var">Corretora A</span> e <span class="math-var">Corretora B</span>). A meta é identificar a maior sequência de ações em comum que preserva a ordem relativa de recomendação em ambas as casas.
+    </p>
+
+    <h3>1.1. Modelagem do Problema (LCS)</h3>
+    <p>
+        Este problema é mapeado para o problema clássico da <strong>Maior Subsequência Comum</strong> (<em>Longest Common Subsequence &mdash; LCS</em>):
+    </p>
+    <ul>
+        <li>Seja <span class="math-var">A</span> a lista de <span class="math-var">M</span> ações recomendadas pela Corretora A.</li>
+        <li>Seja <span class="math-var">B</span> a lista de <span class="math-var">N</span> ações recomendadas pela Corretora B.</li>
+        <li>Deseja-se encontrar uma subsequência comum <span class="math-var">C</span> de comprimento máximo <span class="math-var">K</span> que esteja presente em <span class="math-var">A</span> e em <span class="math-var">B</span> respeitando a ordem de prioridade.</li>
+    </ul>
+
+    <h3>1.2. Abordagem por Programação Dinâmica</h3>
+    <p>
+        A solução utiliza <strong>Programação Dinâmica</strong> para resolver o problema de forma eficiente construindo as respostas de subproblemas menores em uma tabela de memória.
+    </p>
+
+    <div class="formula-box">
+        <strong>Definição da Tabela DP:</strong><br>
+        <span class="code-inline">dp[i][j]</span> armazena o tamanho da maior subsequência comum entre os <span class="math-var">i</span> primeiros ativos da Corretora A e os <span class="math-var">j</span> primeiros ativos da Corretora B.
+    </div>
+
+    <h3>1.3. Relação de Recorrência</h3>
+    <p>A regra de cálculo para preencher a matriz <span class="code-inline">dp</span> é definida por:</p>
+
+    <div class="formula-box" style="text-align: center;">
+        <table class="cases-table">
+            <tr>
+                <td rowspan="3" style="vertical-align: middle; font-weight: bold; padding-right: 8px;">
+                    <span class="math-var">dp[i][j]</span> = 
+                </td>
+                <td rowspan="3" class="brace">{</td>
+                <td style="text-align: left;">0</td>
+                <td style="text-align: left; padding-left: 14px;">se <span class="math-var">i = 0</span> ou <span class="math-var">j = 0</span></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;"><span class="math-var">dp[i-1][j-1] + 1</span></td>
+                <td style="text-align: left; padding-left: 14px;">se <span class="math-var">a<sub>i-1</sub> == b<sub>j-1</sub></span></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;"><span class="math-var">max(dp[i-1][j], dp[i][j-1])</span></td>
+                <td style="text-align: left; padding-left: 14px;">se <span class="math-var">a<sub>i-1</sub> &ne; b<sub>j-1</sub></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>1.4. Preenchimento e Reconstrução do Resultado</h3>
+    <p>
+        O algoritmo aloca a matriz <span class="code-inline">dp</span> de dimensão <span class="math-var">(M+1) &times; (N+1)</span> e preenche seus valores de forma iterativa (bottom-up).
+    </p>
+    <p>
+        Após computar o valor máximo <span class="math-var">K = dp[M][N]</span>, realiza-se o <em>backtracking</em> partindo da posição <span class="math-var">(M, N)</span> até <span class="math-var">(0, 0)</span> para recuperar os nomes dos ativos alinhados. A lista resultante é invertida para manter a ordem original de recomendação.
+    </p>
+
+    <h2>2. Análise de Complexidade de Tempo</h2>
+
+    <p>
+        A análise de tempo descreve a eficiência do algoritmo em função dos tamanhos <span class="math-var">M</span> (Corretora A) e <span class="math-var">N</span> (Corretora B).
+    </p>
+
+    <h3>2.1. Detalhamento por Etapa</h3>
+
+    <ul>
+        <li>
+            <strong>Leitura da Entrada:</strong> Leitura das ações da Corretora A e da Corretora B em tempo <span class="math-var">O(M + N)</span>.
+        </li>
+        <li>
+            <strong>Preenchimento da Matriz DP:</strong> Consiste em dois laços encadeados percorrendo <span class="math-var">M &times; N</span> células. Cada célula compara duas strings de ticker com custo constante <span class="math-var">O(1)</span>. O tempo desta etapa é <span class="math-var">&Theta;(M &times; N)</span>.
+        </li>
+        <li>
+            <strong>Reconstrução por Backtracking:</strong> Rastreamento regressivo que realiza no máximo <span class="math-var">M + N</span> passos em tempo <span class="math-var">O(M + N)</span>.
+        </li>
+        <li>
+            <strong>Impressão da Saída:</strong> Exibição dos <span class="math-var">K</span> ativos alinhados em tempo <span class="math-var">O(K)</span>, onde <span class="math-var">K &le; min(M, N)</span>.
+        </li>
+    </ul>
+
+    <div class="callout">
+        <strong>Complexidade de Tempo Total:</strong><br>
+        <div style="text-align: center; font-weight: bold; margin: 4px 0;">
+            T(M, N) = &Theta;(M &times; N)
+        </div>
+        O tempo de execução do algoritmo é proporcional ao produto dos tamanhos das duas listas, garantindo resposta quase instantânea para a faixa de entradas informada (<span class="math-var">1 &le; M, N &le; 1000</span>).
+    </div>
+
+    <h3>2.2. Resumo da Complexidade de Tempo</h3>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Etapa da Solução</th>
+                <th>Complexidade de Tempo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Leitura dos Dados (STDIN)</td>
+                <td><span class="math-var">O(M + N)</span></td>
+            </tr>
+            <tr>
+                <td>Preenchimento da Matriz DP</td>
+                <td><span class="math-var">&Theta;(M &times; N)</span></td>
+            </tr>
+            <tr>
+                <td>Backtracking (Recuperação da Sequência)</td>
+                <td><span class="math-var">O(M + N)</span></td>
+            </tr>
+            <tr>
+                <td>Inversão e Impressão do Consenso</td>
+                <td><span class="math-var">O(K)</span></td>
+            </tr>
+            <tr style="font-weight: bold; background-color: #f8fafc;">
+                <td>COMPLEXIDADE DE TEMPO TOTAL</td>
+                <td><strong>&Theta;(M &times; N)</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Descrição do Uso de IA (Inteligência Artificial)</h2>
+
+    <p>
+        Descreve-se a seguir como a inteligência artificial (Google Antigravity / Gemini) foi utilizada durante o desenvolvimento do trabalho:
+    </p>
+
+    <ol>
+        <li>
+            <strong>Auxílio na Estruturação do Código:</strong><br>
+            A IA auxiliou no desenvolvimento em Java separando a lógica da solução em <span class="code-inline">LCS.java</span> e a interface de leitura/escrita em <span class="code-inline">Main.java</span>.
+        </li>
+        <li>
+            <strong>Criação de Testes de Validação:</strong><br>
+            A IA foi utilizada para criar scripts automatizados de testes cobrindo exemplos padrão e casos de borda (listas disjuntas, totalmente alinhadas e com ordens alternadas).
+        </li>
+        <li>
+            <strong>Elaboração da Documentação:</strong><br>
+            A IA auxiliou na redação clara da modelagem do problema, organização da análise de complexidade de tempo e compilação do arquivo <span class="code-inline">README.pdf</span>.
+        </li>
+    </ol>
+
+</body>
+</html>
+"""
+
+with open('README.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+cmd = [
+    edge_path,
+    '--headless',
+    '--disable-gpu',
+    '--no-pdf-header-footer',
+    '--print-to-pdf=' + os.path.abspath('README.pdf'),
+    os.path.abspath('README.html')
+]
+
+res = subprocess.run(cmd, capture_output=True, text=True)
+print("Edge Return Code:", res.returncode)
+
+import pypdf
+reader = pypdf.PdfReader('README.pdf')
+print(f"Generated PDF Page Count: {len(reader.pages)}")
