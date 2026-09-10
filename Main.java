@@ -13,14 +13,12 @@ public class Main {
 
         int m = sc.nextInt();
         int n = sc.nextInt();
-
-        // input corretora A
+       
         String[] a = new String[m];
         for (int i = 0; i < m; i++) {
             a[i] = sc.next();
         }
 
-        // input corretora B
         String[] b = new String[n];
         for (int j = 0; j < n; j++) {
             b[j] = sc.next();
@@ -28,10 +26,10 @@ public class Main {
 
         List<String> consenso = LCS.obterLCS(a, b);
 
-        // Saída - Linha 1: Quantidade K de ativos alinhados no consenso
+        // quantidade de ativos em comum
         System.out.println(consenso.size());
 
-        // Saída - Linha 2: Ativos separados por espaço (ou linha em branco se K == 0)
+        // ativos descritos
         if (!consenso.isEmpty()) {
             System.out.println(String.join(" ", consenso));
         } else {
