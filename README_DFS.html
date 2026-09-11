@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>README - Alinhamento Estratégico de Carteiras (Solução Autoral por DFS)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 12mm 16mm 12mm 16mm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.42;
+            font-size: 9.2pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-box {
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+
+        .institution {
+            font-size: 8.2pt;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .course-title {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 1px 0 0 0;
+        }
+
+        .doc-title {
+            font-size: 14pt;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 2px 0 1px 0;
+        }
+
+        .meta-info {
+            font-size: 8.2pt;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        h2 {
+            font-size: 11pt;
+            color: #1e40af;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 2px;
+            margin-top: 11px;
+            margin-bottom: 5px;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 9.6pt;
+            color: #1e293b;
+            margin-top: 8px;
+            margin-bottom: 3px;
+            page-break-after: avoid;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: 5px;
+            padding-left: 18px;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+
+        .formula-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+            padding: 6px 10px;
+            margin: 6px 0;
+            font-size: 8.8pt;
+            page-break-inside: avoid;
+        }
+
+        .tree-container {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 6px 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 8pt;
+            line-height: 1.25;
+            color: #1e293b;
+            white-space: pre;
+            page-break-inside: avoid;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 7px 0;
+            font-size: 8.7pt;
+            page-break-inside: avoid;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #cbd5e1;
+            padding: 4px 8px;
+            text-align: center;
+        }
+
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .callout {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 4px;
+            padding: 6px 10px;
+            margin: 6px 0;
+            font-size: 8.8pt;
+            page-break-inside: avoid;
+        }
+
+        .math-var {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .code-inline {
+            font-family: 'Consolas', monospace;
+            background-color: #f1f5f9;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-size: 8.7pt;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="institution">IFSULDEMINAS &mdash; Campus Poços de Caldas</div>
+        <div class="course-title">Projeto e Análise de Algoritmos (PAA) &mdash; Prof. Douglas Castilho</div>
+        <div class="doc-title">Trabalho Prático 1: Alinhamento Estratégico de Carteiras</div>
+        <div class="meta-info">
+            <strong>Relatório Técnico (README.pdf)</strong> &nbsp;|&nbsp; 
+            <strong>Abordagem:</strong> Busca em Profundidade (DFS) com Árvore Binária Implícita &nbsp;|&nbsp;
+            <strong>Linguagem:</strong> Java 17+
+        </div>
+    </div>
+
+    <h2>1. Descrição e Modelagem da Solução Desenvolvida</h2>
+    
+    <p>
+        O objetivo do trabalho é determinar o <strong>Núcleo de Consenso Ordenado</strong> entre carteiras recomendadas emitidas por duas instituições de análise (<span class="math-var">Corretora A</span> e <span class="math-var">Corretora B</span>). Esse alinhamento exige identificar a maior sequência de ações em comum preservando rigorosamente a ordem relativa de recomendação em ambos os relatórios.
+    </p>
+
+    <h3>1.1. Modelagem Autoral: A Árvore Binária Implícita de Decisões</h3>
+    <p>
+        Diferente das abordagens tabulares clássicas de Programação Dinâmica, esta solução modela o espaço de estados do problema através do percurso sobre uma <strong>árvore binária de decisões implícita</strong>. Para cada ativo <span class="math-var">A[i]</span> da Corretora A, o algoritmo ramifica em duas decisões booleanas excludentes:
+    </p>
+    <ul>
+        <li><strong>Ramo Esquerdo ("Pega o ativo"):</strong> Inclui o ativo <span class="math-var">A[i]</span> na subsequência candidata e avança para a avaliação de <span class="math-var">A[i+1]</span>.</li>
+        <li><strong>Ramo Direito ("Não pega o ativo"):</strong> Descarta o ativo <span class="math-var">A[i]</span> e avança para <span class="math-var">A[i+1]</span> sem alterar a subsequência corrente.</li>
+    </ul>
+
+    <p>Para uma entrada simplificada com 3 ativos <span class="code-inline">[A, B, C]</span>, a estrutura binária completa percorrida pelo algoritmo é representada a seguir:</p>
+
+    <div class="tree-container">
+                                      [ ]
+                                   /        \
+                                pega A     não pega A
+                                 [A]          [ ]
+                                /   \        /   \
+                           pega B  não B  pega B  não B
+                            [AB]    [A]    [B]      [ ]
+                            / \      / \    / \      / \
+                         ABC  AB   AC   A  BC   B   C   [ ]   <-- 2³ Subsequências (Folhas)
+    </div>
+
+    <h3>1.2. Percurso em Profundidade (DFS) com Backtracking</h3>
+    <p>
+        O algoritmo percorre a árvore por meio de <strong>Busca em Profundidade</strong> (<em>Depth-First Search &mdash; DFS</em>). O estado do caminho é mantido dinamicamente em uma lista:
+    </p>
+    <ol>
+        <li>Ao descer pelo ramo esquerdo ("pega"), adiciona-se o ticker atual ao final da lista candidata.</li>
+        <li>Ao retornar da recursão, executa-se o <strong>Backtracking</strong> (<span class="code-inline">caminhoAtual.remove(caminhoAtual.size() - 1)</span> em <span class="math-var">O(1)</span>), restaurando o estado anterior para viabilizar a exploração pura do ramo direito ("não pega").</li>
+        <li>Ao alcançar uma folha (índice igual a <span class="math-var">M</span>), tem-se uma subsequência candidata completa gerada a partir de A.</li>
+    </ol>
+
+    <h3>1.3. Validação Linear de Subsequência na Corretora B</h3>
+    <p>
+        Ao atingir uma folha com tamanho estritamente superior ao da melhor solução registrada até o momento (<span class="code-inline">caminhoAtual.size() &gt; melhorSolucao.size()</span>), aciona-se a verificação com a <span class="math-var">Corretora B</span>.
+    </p>
+    <p>
+        O método <span class="code-inline">ehSubsequencia</span> realiza uma varredura linear com ponteiro sobre o vetor <span class="math-var">B</span>: cada ticker da sequência candidata é procurado em <span class="math-var">B</span> em posição posterior à ocorrência do anterior. Sendo validado com sucesso, a solução ótima é atualizada.
+    </p>
+
+    <h3>1.4. Otimização por Poda de Viabilidade (Branch and Bound)</h3>
+    <p>
+        Para evitar a expansão de ramificações que matematicamente não podem superar o consenso corrente, implementou-se uma <strong>poda por cota superior</strong>:
+    </p>
+    <div class="formula-box">
+        <strong>Critério de Poda (Bounding Function):</strong><br>
+        Se <span class="code-inline">caminhoAtual.size() + (M - indice) &le; melhorSolucao.size()</span>, o ramo atual é descartado.
+    </div>
+    <p>
+        Se o número de ativos já acumulados somado a <em>todos</em> os ativos restantes em <span class="math-var">A</span> for insuficiente para bater o recorde atual, o nó e toda a sua subárvore são abortados imediatamente.
+    </p>
+
+    <h2>2. Análise de Complexidade de Tempo e Espaço</h2>
+
+    <h3>2.1. Complexidade de Tempo</h3>
+    <ul>
+        <li>
+            <strong>Espaço de Estados da Árvore:</strong> Uma árvore binária com altura <span class="math-var">M</span> possui <span class="math-var">2^M</span> nós-folha e <span class="math-var">2^{M+1} - 1</span> nós no total.
+        </li>
+        <li>
+            <strong>Custo por Nó e Folha:</strong> Cada decisão na árvore consome tempo constante <span class="math-var">O(1)</span>. Nas folhas promissoras, a validação linear em B percorre no máximo <span class="math-var">N</span> elementos em tempo <span class="math-var">O(N)</span>.
+        </li>
+        <li>
+            <strong>Pior Caso Teórico:</strong> Quando a poda não elimina nós precocemente (ex.: sequências sem nenhuma interseção), o algoritmo visita todas as folhas, totalizando <span class="math-var">O(2^M \cdot N)</span>.
+        </li>
+        <li>
+            <strong>Desempenho com Poda:</strong> Na presença de alinhamentos comuns nos primeiros ramos da DFS, a cota superior rapidamente elimina extensas subárvores, viabilizando execução célere para conjuntos de teste reais.
+        </li>
+    </ul>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Etapa do Algoritmo</th>
+                <th>Complexidade de Tempo</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Leitura dos Dados (STDIN)</td>
+                <td><span class="math-var">O(M + N)</span></td>
+                <td>Leitura linear dos vetores das duas corretoras.</td>
+            </tr>
+            <tr>
+                <td>Geração da Árvore DFS</td>
+                <td><span class="math-var">O(2^M)</span></td>
+                <td>Bifurcação binária ("pega" / "não pega") para os M ativos de A.</td>
+            </tr>
+            <tr>
+                <td>Validação em B (Folhas Promissoras)</td>
+                <td><span class="math-var">O(N)</span></td>
+                <td>Varredura gulosa com ponteiro sobre o vetor da Corretora B.</td>
+            </tr>
+            <tr>
+                <td>Escrita da Saída (STDOUT)</td>
+                <td><span class="math-var">O(K)</span></td>
+                <td>Impressão da quantidade e dos K tickers alinhados.</td>
+            </tr>
+            <tr style="font-weight: bold; background-color: #f8fafc;">
+                <td>COMPLEXIDADE DE TEMPO TOTAL (Pior Caso)</td>
+                <td colspan="2"><strong>O(2<sup>M</sup> &times; N)</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>2.2. Complexidade de Espaço (Memória Auxiliar)</h3>
+    <ul>
+        <li>
+            <strong>Pilha de Execução (Recursão):</strong> A profundidade da recursão corresponde à altura da árvore (<span class="math-var">M</span> chamadas empilhadas), resultando em consumo espacial <span class="math-var">O(M)</span>.
+        </li>
+        <li>
+            <strong>Memória Auxiliar:</strong> As listas <span class="code-inline">caminhoAtual</span> e <span class="code-inline">melhorSolucao</span> mantêm até <span class="math-var">M</span> referências, requerendo <span class="math-var">O(M)</span> de espaço.
+        </li>
+        <li>
+            <strong>Complexidade Espacial Total:</strong> <span class="math-var">O(M + N)</span> para armazenar a entrada e apenas <span class="math-var">O(M)</span> de espaço auxiliar (sem alocação de matrizes bidimensionais).
+        </li>
+    </ul>
+
+    <h2>3. Descrição do Uso de IA (Inteligência Artificial)</h2>
+    <p>
+        O uso de inteligência artificial durante o desenvolvimento deste trabalho prático compreendeu:
+    </p>
+    <ol>
+        <li>
+            <strong>Modelagem da Árvore Binária Implícita:</strong> Apoio na formulação da árvore de decisões binárias ("pega" / "não pega") para geração sistemática das subsequências via DFS.
+        </li>
+        <li>
+            <strong>Implementação do Mecanismo de Poda:</strong> Dedução formal da cota superior de viabilidade (*bounding function*) para descarte de subárvores subótimas.
+        </li>
+        <li>
+            <strong>Automação de Testes e Validação:</strong> Estruturação de rotinas de teste para verificação estrita contra os exemplos oficiais do documento do trabalho.
+        </li>
+        <li>
+            <strong>Elaboração dos Relatórios Técnicos:</strong> Diagramação e formatação da documentação técnica acadêmica em formatos HTML e PDF.
+        </li>
+    </ol>
+
+</body>
+</html>
